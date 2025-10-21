@@ -1,0 +1,577 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Slim Async API",
+    "description": "API REST para CRUD de usuários usando Slim Framework + Swoole + MongoDB",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Slim Async Team",
+      "email": "team@slimasync.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9501",
+      "description": "Servidor de desenvolvimento"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Endpoints de health check e monitoramento"
+    },
+    {
+      "name": "Users",
+      "description": "Operações CRUD para usuários"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check básico",
+        "description": "Verifica se o servidor está funcionando",
+        "responses": {
+          "200": {
+            "description": "Servidor funcionando",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "✅ Slim + Swoole está rodando!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check detalhado",
+        "description": "Retorna informações detalhadas sobre o status do serviço",
+        "responses": {
+          "200": {
+            "description": "Status do serviço",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-15 10:30:00"
+                    },
+                    "service": {
+                      "type": "string",
+                      "example": "slim-async-api"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/mongo": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Teste de conexão MongoDB",
+        "description": "Testa a conexão com o banco de dados MongoDB",
+        "responses": {
+          "200": {
+            "description": "Conexão MongoDB funcionando",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "database": {
+                      "type": "string",
+                      "example": "mongodb"
+                    },
+                    "connection": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "inserted_id": {
+                      "type": "string",
+                      "example": "65a1b2c3d4e5f6789012345"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-15 10:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Erro na conexão MongoDB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "unhealthy"
+                    },
+                    "database": {
+                      "type": "string",
+                      "example": "mongodb"
+                    },
+                    "connection": {
+                      "type": "string",
+                      "example": "failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Connection timeout"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-15 10:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/async": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Teste de corrotinas Swoole",
+        "description": "Testa o funcionamento das corrotinas assíncronas",
+        "responses": {
+          "200": {
+            "description": "Corrotinas funcionando",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "async": {
+                      "type": "string",
+                      "example": "enabled"
+                    },
+                    "coroutines": {
+                      "type": "string",
+                      "example": "working"
+                    },
+                    "execution_time_ms": {
+                      "type": "number",
+                      "example": 12.5
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-15 10:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Listar usuários",
+        "description": "Retorna uma lista paginada de usuários",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Número da página",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Número de itens por página",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de usuários",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 10
+                        },
+                        "count": {
+                          "type": "integer",
+                          "example": 5
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Criar usuário",
+        "description": "Cria um novo usuário no sistema",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito - email ou username já existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Buscar usuário por ID",
+        "description": "Retorna um usuário específico pelo ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuário",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Atualizar usuário",
+        "description": "Atualiza um usuário existente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuário",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito - email ou username já existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Deletar usuário",
+        "description": "Remove um usuário do sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuário",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Usuário deletado com sucesso"
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID único do usuário",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9_]+$",
+            "description": "Nome de usuário único",
+            "example": "johndoe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email único do usuário",
+            "example": "john@example.com"
+          },
+          "type_doc": {
+            "type": "string",
+            "enum": ["CPF", "CNPJ"],
+            "description": "Tipo de documento",
+            "example": "CPF"
+          },
+          "number_doc": {
+            "type": "string",
+            "description": "Número do documento (CPF ou CNPJ)",
+            "example": "11144477735"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de criação",
+            "example": "2024-01-15 10:30:00"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data da última atualização",
+            "example": "2024-01-15 10:30:00"
+          }
+        },
+        "required": ["id", "username", "email", "type_doc", "number_doc", "created_at", "updated_at"]
+      },
+      "CreateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9_]+$",
+            "description": "Nome de usuário único",
+            "example": "johndoe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email único do usuário",
+            "example": "john@example.com"
+          },
+          "type_doc": {
+            "type": "string",
+            "enum": ["CPF", "CNPJ"],
+            "description": "Tipo de documento",
+            "example": "CPF"
+          },
+          "number_doc": {
+            "type": "string",
+            "description": "Número do documento (CPF ou CNPJ)",
+            "example": "11144477735"
+          }
+        },
+        "required": ["username", "email", "type_doc", "number_doc"]
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9_]+$",
+            "description": "Nome de usuário único",
+            "example": "janedoe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email único do usuário",
+            "example": "jane@example.com"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Mensagem de erro",
+            "example": "User not found"
+          }
+        },
+        "required": ["error"]
+      }
+    }
+  }
+}

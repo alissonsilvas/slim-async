@@ -6,8 +6,8 @@ FROM php:8.3-cli
 # Instala dependências do sistema e extensões
 RUN apt-get update && apt-get install -y \
     git zip unzip libssl-dev pkg-config libcurl4-openssl-dev \
-    && pecl install swoole \
-    && docker-php-ext-enable swoole \
+    && pecl install swoole mongodb-1.21.0 \
+    && docker-php-ext-enable swoole mongodb \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instala Composer
@@ -26,4 +26,4 @@ RUN composer install --no-interaction --optimize-autoloader
 EXPOSE 9501
 
 # Comando padrão: roda o servidor Swoole
-CMD ["php", "server.php"]
+CMD ["php", "src/server.php"]

@@ -1,32 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 use Slim\Factory\AppFactory;
-use Slim\Swoole\ServerRequestFactory;
-use Swoole\Http\Server;
+use SlimAsync\Config\ServerConfig;
+use SlimAsync\Server\SwooleServer;
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-\Swoole\Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL);
+\Swoole\Runtime::enableCoroutine(SWOOLE_HOOK_ALL);
 
 $app = AppFactory::create();
+$routes = require __DIR__ . '/routes.php';
+$routes($app);
 
-require __DIR__ . '/src/routes.php';
+$config = new ServerConfig();
+$server = new SwooleServer($config, $app);
 
-$server = new Server('0.0.0.0', 9501);
-
-// Configurações do servidor
-$server->set([
-    'worker_num' => 4,          // número de workers
-    'max_request' => 5000,      // reinicia worker após 5000 requests (evita leaks)
-    'reload_async' => true,
-    'enable_coroutine' => true,
-]);
-
-// Cria callback para tratar requisições HTTP
-$server->on('request', ServerRequestFactory::createRequestCallback($app));
-
-// Log simples no console
-echo "✅ Servidor Swoole + Slim rodando em http://127.0.0.1:9501\n";
-
-// Inicia o servidor
 $server->start();
