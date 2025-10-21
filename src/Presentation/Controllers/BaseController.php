@@ -11,14 +11,16 @@ abstract class BaseController
 {
     protected function successResponse(Response $response, array $data, int $statusCode = 200): Response
     {
-        $response->getBody()->write(json_encode($data));
+        $body = $response->getBody();
+        $body->write(json_encode($data));
 
         return $response->withStatus($statusCode)->withHeader('Content-Type', 'application/json');
     }
 
     protected function errorResponse(Response $response, string $message, int $statusCode = 400): Response
     {
-        $response->getBody()->write(json_encode(['error' => $message]));
+        $body = $response->getBody();
+        $body->write(json_encode(['error' => $message]));
 
         return $response->withStatus($statusCode)->withHeader('Content-Type', 'application/json');
     }
@@ -50,8 +52,15 @@ abstract class BaseController
 
     protected function getJsonData(Request $request): ?array
     {
-        $body = $request->getBody()->getContents();
-        $data = json_decode($body, true);
+        $body = $request->getBody();
+        $body->rewind();
+        $contents = $body->getContents();
+
+        if (empty($contents)) {
+            return null;
+        }
+
+        $data = json_decode($contents, true);
 
         return json_last_error() === JSON_ERROR_NONE ? $data : null;
     }

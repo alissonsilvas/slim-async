@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Presentation;
 
+use App\Application\Interfaces\UseCases\CreateUserUseCaseInterface;
+use App\Application\Interfaces\UseCases\DeleteUserUseCaseInterface;
+use App\Application\Interfaces\UseCases\GetUserUseCaseInterface;
+use App\Application\Interfaces\UseCases\ListUsersUseCaseInterface;
+use App\Application\Interfaces\UseCases\UpdateUserUseCaseInterface;
 use App\Application\UseCases\User\CreateUserUseCase;
 use App\Application\UseCases\User\DeleteUserUseCase;
 use App\Application\UseCases\User\GetUserUseCase;
@@ -41,23 +46,23 @@ class Container
         );
 
         // Use Cases
-        $this->services[CreateUserUseCase::class] = fn () => new CreateUserUseCase(
+        $this->services[CreateUserUseCaseInterface::class] = fn () => new CreateUserUseCase(
             $this->get(UserRepositoryInterface::class)
         );
 
-        $this->services[GetUserUseCase::class] = fn () => new GetUserUseCase(
+        $this->services[GetUserUseCaseInterface::class] = fn () => new GetUserUseCase(
             $this->get(UserRepositoryInterface::class)
         );
 
-        $this->services[UpdateUserUseCase::class] = fn () => new UpdateUserUseCase(
+        $this->services[UpdateUserUseCaseInterface::class] = fn () => new UpdateUserUseCase(
             $this->get(UserRepositoryInterface::class)
         );
 
-        $this->services[DeleteUserUseCase::class] = fn () => new DeleteUserUseCase(
+        $this->services[DeleteUserUseCaseInterface::class] = fn () => new DeleteUserUseCase(
             $this->get(UserRepositoryInterface::class)
         );
 
-        $this->services[ListUsersUseCase::class] = fn () => new ListUsersUseCase(
+        $this->services[ListUsersUseCaseInterface::class] = fn () => new ListUsersUseCase(
             $this->get(UserRepositoryInterface::class)
         );
     }

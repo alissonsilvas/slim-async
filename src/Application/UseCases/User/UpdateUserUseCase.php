@@ -6,12 +6,13 @@ namespace App\Application\UseCases\User;
 
 use App\Application\DTOs\UpdateUserDTO;
 use App\Application\DTOs\UserResponseDTO;
+use App\Application\Interfaces\UseCases\UpdateUserUseCaseInterface;
 use App\Domain\Interfaces\UserRepositoryInterface;
 use App\Domain\ValueObjects\Document;
 use App\Domain\ValueObjects\Email;
 use App\Domain\ValueObjects\Username;
 
-final class UpdateUserUseCase
+class UpdateUserUseCase implements UpdateUserUseCaseInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository

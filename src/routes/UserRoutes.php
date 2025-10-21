@@ -6,11 +6,11 @@ namespace App\Routes;
 
 use App\Application\DTOs\CreateUserDTO;
 use App\Application\DTOs\UpdateUserDTO;
-use App\Application\UseCases\User\CreateUserUseCase;
-use App\Application\UseCases\User\DeleteUserUseCase;
-use App\Application\UseCases\User\GetUserUseCase;
-use App\Application\UseCases\User\ListUsersUseCase;
-use App\Application\UseCases\User\UpdateUserUseCase;
+use App\Application\Interfaces\UseCases\CreateUserUseCaseInterface;
+use App\Application\Interfaces\UseCases\DeleteUserUseCaseInterface;
+use App\Application\Interfaces\UseCases\GetUserUseCaseInterface;
+use App\Application\Interfaces\UseCases\ListUsersUseCaseInterface;
+use App\Application\Interfaces\UseCases\UpdateUserUseCaseInterface;
 use App\Presentation\Controllers\UserController;
 use App\Presentation\RouteFactory;
 use Slim\App;
@@ -23,11 +23,11 @@ class UserRoutes
             $app,
             '/users',
             UserController::class,
-            CreateUserUseCase::class,
-            GetUserUseCase::class,
-            UpdateUserUseCase::class,
-            DeleteUserUseCase::class,
-            ListUsersUseCase::class,
+            CreateUserUseCaseInterface::class,
+            GetUserUseCaseInterface::class,
+            UpdateUserUseCaseInterface::class,
+            DeleteUserUseCaseInterface::class,
+            ListUsersUseCaseInterface::class,
             CreateUserDTO::class,
             UpdateUserDTO::class
         );

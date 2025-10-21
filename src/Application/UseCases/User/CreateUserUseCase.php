@@ -6,13 +6,14 @@ namespace App\Application\UseCases\User;
 
 use App\Application\DTOs\CreateUserDTO;
 use App\Application\DTOs\UserResponseDTO;
+use App\Application\Interfaces\UseCases\CreateUserUseCaseInterface;
 use App\Domain\Entities\User;
 use App\Domain\Interfaces\UserRepositoryInterface;
 use App\Domain\ValueObjects\Document;
 use App\Domain\ValueObjects\Email;
 use App\Domain\ValueObjects\Username;
 
-final class CreateUserUseCase
+class CreateUserUseCase implements CreateUserUseCaseInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository

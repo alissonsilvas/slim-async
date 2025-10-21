@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\UseCases\User;
 
+use App\Application\Interfaces\UseCases\DeleteUserUseCaseInterface;
 use App\Domain\Interfaces\UserRepositoryInterface;
 
-final class DeleteUserUseCase
+class DeleteUserUseCase implements DeleteUserUseCaseInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository

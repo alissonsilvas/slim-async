@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Application\UseCases\User;
 
 use App\Application\DTOs\UserResponseDTO;
+use App\Application\Interfaces\UseCases\GetUserUseCaseInterface;
 use App\Domain\Interfaces\UserRepositoryInterface;
 
-final class GetUserUseCase
+class GetUserUseCase implements GetUserUseCaseInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository

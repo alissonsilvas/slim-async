@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Application\UseCases\User;
 
 use App\Application\DTOs\UserResponseDTO;
+use App\Application\Interfaces\UseCases\ListUsersUseCaseInterface;
 use App\Domain\Entities\User;
 use App\Domain\Interfaces\UserRepositoryInterface;
 
-final class ListUsersUseCase
+class ListUsersUseCase implements ListUsersUseCaseInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository
