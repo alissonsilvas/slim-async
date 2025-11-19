@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Config\ServerConfig;
+use App\Server\SwooleServer;
 use Slim\Factory\AppFactory;
-use SlimAsync\Config\ServerConfig;
-use SlimAsync\Server\SwooleServer;
 
 require __DIR__ . '/../vendor/autoload.php';
 

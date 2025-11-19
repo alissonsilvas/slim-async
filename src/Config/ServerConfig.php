@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SlimAsync\Config;
+namespace App\Config;
 
 class ServerConfig
 {

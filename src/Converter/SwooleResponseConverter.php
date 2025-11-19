@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SlimAsync\Converter;
+namespace App\Converter;
 
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Response as SwooleResponse;

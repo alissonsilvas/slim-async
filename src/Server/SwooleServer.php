@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace SlimAsync\Server;
+namespace App\Server;
 
+use App\Config\ServerConfig;
+use App\Converter\SwooleRequestConverter;
+use App\Converter\SwooleResponseConverter;
 use Psr\Http\Server\RequestHandlerInterface;
-use SlimAsync\Config\ServerConfig;
-use SlimAsync\Converter\SwooleRequestConverter;
-use SlimAsync\Converter\SwooleResponseConverter;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Http\Server;
